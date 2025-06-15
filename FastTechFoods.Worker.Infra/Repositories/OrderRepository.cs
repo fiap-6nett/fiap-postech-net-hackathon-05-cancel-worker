@@ -39,7 +39,7 @@ namespace FastTechFoods.Worker.Infra.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Falha ao inserir o contato. Erro {ex.Message}");
+                throw new Exception($"Falha ao cancelar o pedido. Erro {ex.Message}");
             }
 
         }
