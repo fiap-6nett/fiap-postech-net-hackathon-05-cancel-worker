@@ -21,8 +21,7 @@ public class OrderAppService : IOrderAppService
 
         if (order is null)
             return Task.CompletedTask;
-
-        order.Status = dto.OrderStatus;
+                
         order.LastUpdatedAt = DateTime.Now;
         order.Justification = dto.Justification;
 
@@ -30,7 +29,8 @@ public class OrderAppService : IOrderAppService
         {
             case OrderStatus.Accepted or OrderStatus.Rejected or OrderStatus.Cancelled when order.Status == OrderStatus.Created:
             case OrderStatus.InProgress when order.Status == OrderStatus.Accepted:
-            case OrderStatus.Finished   when order.Status == OrderStatus.InProgress:               
+            case OrderStatus.Finished   when order.Status == OrderStatus.InProgress:
+                order.Status = dto.OrderStatus;
                 _orderRepository.UpdateOrder(order);
                 return Task.CompletedTask;
         }
