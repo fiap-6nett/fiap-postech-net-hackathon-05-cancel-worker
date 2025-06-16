@@ -4,5 +4,5 @@ namespace FastTechFoods.Worker.Application.Interfaces;
 
 public interface IOrderAppService
 {
-     Task RegisterOrder(OrderDto dto);
+     Task UpdateOrder(ChangeStatusDto dto);
 }

@@ -23,7 +23,7 @@ namespace FastTechFoods.Worker.Infra.Mensageria.Consumer
             _connection = rabbitConnection;
             _channel = _connection.CreateModel();
 
-            _queueName = configuration["RabbitMQ:QueueName"] ?? "orders-cancel-fast-tech";
+            _queueName = configuration["RabbitMQ:QueueName"] ?? "orders-update-fast-tech";
 
             _channel.QueueDeclare(
                 queue: _queueName,
@@ -50,9 +50,9 @@ namespace FastTechFoods.Worker.Infra.Mensageria.Consumer
 
                 Console.WriteLine($"Mensagem recebida: {message}");
 
-                var dto = JsonConvert.DeserializeObject<OrderDto>(message);
+                var dto = JsonConvert.DeserializeObject<ChangeStatusDto>(message);
 
-                _appService.RegisterOrder(dto);
+                _appService.UpdateOrder(dto);
             };
 
             _channel.BasicConsume(

@@ -15,30 +15,26 @@ public class OrderAppService : IOrderAppService
         _orderRepository = orderRepository;
     }
     
-    public Task RegisterOrder(OrderDto dto)
+    public Task UpdateOrder(ChangeStatusDto dto)
     {
-        var order = new Order
-        {
-            IdStore = dto.IdStore,
-            IdUser = dto.IdUser,
-            Status = OrderStatus.Created,
-            DeliveryType = dto.DeliveryType,
-            Items = dto.Items.Select(i => new Item(
-                        id: i.Id,
-                        menuItemId: i.MenuItemId,
-                        name: i.Name,
-                        description: i.Description,
-                        price: i.Price,
-                        amount: i.Amount,
-                        category: i.Category,
-                        notes: i.Notes)
-            ),
-            Justification = dto.Justification
-        };    
-        
-        _orderRepository.RegisterOrder(order);
-        
-        return Task.CompletedTask;
+        var order = _orderRepository.GetById(dto.OrderId);
 
+        if (order is null)
+            return Task.CompletedTask;
+
+        order.Status = dto.OrderStatus;
+        order.LastUpdatedAt = DateTime.Now;
+        order.Justification = dto.Justification;
+
+        switch (dto.OrderStatus)
+        {
+            case OrderStatus.Accepted or OrderStatus.Rejected or OrderStatus.Cancelled when order.Status == OrderStatus.Created:
+            case OrderStatus.InProgress when order.Status == OrderStatus.Accepted:
+            case OrderStatus.Finished   when order.Status == OrderStatus.InProgress:               
+                _orderRepository.UpdateOrder(order);
+                return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
     }
 }

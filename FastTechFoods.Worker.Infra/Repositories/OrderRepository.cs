@@ -20,22 +20,14 @@ namespace FastTechFoods.Worker.Infra.Repositories
             return _order.Find(c => c.Id == id).FirstOrDefault();
         }
 
-        public void RegisterOrder(Order order)
+        public async void UpdateOrder(Order order)
         {
             try
             {
-
                 // Criando um filtro para buscar pelo Id
                 var filterId = Builders<Order>.Filter.Eq(c => c.Id, order.Id);
 
-                // Realizando a busca no banco
-                var existing_id = _order.Find(filterId).FirstOrDefault();
-
-                if (existing_id == null)
-                {
-                    _order.InsertOneAsync(order);
-                }
-
+                await _order.ReplaceOneAsync(filterId, order);
             }
             catch (Exception ex)
             {
